@@ -43,6 +43,9 @@ public class DBConnector {
 			return DBConnector.connectToRedshift(server, user, password);
 		else if (dbType.equals(DbType.TERADATA))
 			return DBConnector.connectToTeradata(server, user, password);
+		else if (dbType.equals(DbType.BIGQUERY))
+			//toddo: make this a bigquery connector
+			return DBConnector.connectToTeradata(server, user, password);
 		else
 			return null;
 	}

@@ -124,7 +124,7 @@ public class WhiteRabbitMain implements ActionListener {
 		if (args.length == 2 && args[0].equalsIgnoreCase("-ini"))
 			launchCommandLine(args[1]);
 		else {
-			frame = new JFrame("White Rabbit");
+			frame = new JFrame("White Rabbit for BigQuery");
 
 			frame.addWindowListener(new WindowAdapter() {
 				public void windowClosing(WindowEvent e) {
@@ -192,6 +192,8 @@ public class WhiteRabbitMain implements ActionListener {
 				dbSettings.dbType = DbType.MSACCESS;
 			else if (iniFile.get("DATA_TYPE").equalsIgnoreCase("Teradata"))
 				dbSettings.dbType = DbType.TERADATA;
+			else if (iniFile.get("DATA_TYPE").equalsIgnoreCase("Google BigQuery"))
+				dbSettings.dbType = DbType.BIGQUERY;
 		}
 		if (iniFile.get("TABLES_TO_SCAN").equalsIgnoreCase("*")) {
 			RichConnection connection = new RichConnection(dbSettings.server, dbSettings.domain, dbSettings.user, dbSettings.password, dbSettings.dbType);
@@ -262,7 +264,7 @@ public class WhiteRabbitMain implements ActionListener {
 		sourcePanel.setLayout(new GridLayout(0, 2));
 		sourcePanel.setBorder(BorderFactory.createTitledBorder("Source data location"));
 		sourcePanel.add(new JLabel("Data type"));
-		sourceType = new JComboBox<String>(new String[] { "Delimited text files", "MySQL", "Oracle", "SQL Server", "PostgreSQL", "MS Access", "PDW", "Redshift", "Teradata" });
+		sourceType = new JComboBox<String>(new String[] { "Delimited text files", "MySQL", "Oracle", "SQL Server", "PostgreSQL", "MS Access", "PDW", "Redshift", "Teradata", "Google BigQuery" });
 		sourceType.setToolTipText("Select the type of source data available");
 		sourceType.addItemListener(new ItemListener() {
 

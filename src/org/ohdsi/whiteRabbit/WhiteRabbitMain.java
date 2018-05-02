@@ -78,6 +78,7 @@ import org.ohdsi.utilities.StringUtilities;
 import org.ohdsi.utilities.files.IniFile;
 import org.ohdsi.whiteRabbit.fakeDataGenerator.FakeDataGenerator;
 import org.ohdsi.whiteRabbit.scan.SourceDataScan;
+import schemasMicrosoftComVml.STTrueFalse;
 
 /**
  * This is the WhiteRabbit main class
@@ -86,6 +87,9 @@ public class WhiteRabbitMain implements ActionListener {
 
 	public final static String	WIKI_URL						= "http://www.ohdsi.org/web/wiki/doku.php?id=documentation:software:whiterabbit";
 	public final static String	ACTION_CMD_HELP					= "Open help Wiki";
+
+	//BigQuery requires different connection parameters. This global variable is needed to track what the form looks like
+	private  boolean 			IS_BIGQUERY	 					= false;
 
 	private JFrame				frame;
 	private JTextField			folderField;
@@ -162,6 +166,8 @@ public class WhiteRabbitMain implements ActionListener {
 			dbSettings.password = iniFile.get("PASSWORD");
 			dbSettings.server = iniFile.get("SERVER_LOCATION");
 			dbSettings.database = iniFile.get("DATABASE_NAME");
+
+
 			if (iniFile.get("DATA_TYPE").equalsIgnoreCase("MySQL"))
 				dbSettings.dbType = DbType.MYSQL;
 			else if (iniFile.get("DATA_TYPE").equalsIgnoreCase("Oracle"))
@@ -170,6 +176,10 @@ public class WhiteRabbitMain implements ActionListener {
 				dbSettings.dbType = DbType.POSTGRESQL;
 			else if (iniFile.get("DATA_TYPE").equalsIgnoreCase("Redshift"))
 				dbSettings.dbType = DbType.REDSHIFT;
+			else if (iniFile.get("DATA_TYPE").equalsIgnoreCase("BigQuery")){
+				dbSettings.dbType = DbType.BIGQUERY;
+				dbSettings.database = iniFile.get("DATABASE_NAME");
+				}
 			else if (iniFile.get("DATA_TYPE").equalsIgnoreCase("SQL Server")) {
 				dbSettings.dbType = DbType.MSSQL;
 				if (iniFile.get("USER_NAME").length() != 0) { // Not using windows authentication
@@ -192,8 +202,6 @@ public class WhiteRabbitMain implements ActionListener {
 				dbSettings.dbType = DbType.MSACCESS;
 			else if (iniFile.get("DATA_TYPE").equalsIgnoreCase("Teradata"))
 				dbSettings.dbType = DbType.TERADATA;
-			else if (iniFile.get("DATA_TYPE").equalsIgnoreCase("Google BigQuery"))
-				dbSettings.dbType = DbType.BIGQUERY;
 		}
 		if (iniFile.get("TABLES_TO_SCAN").equalsIgnoreCase("*")) {
 			RichConnection connection = new RichConnection(dbSettings.server, dbSettings.domain, dbSettings.user, dbSettings.password, dbSettings.dbType);
@@ -232,6 +240,7 @@ public class WhiteRabbitMain implements ActionListener {
 	}
 
 	private JPanel createLocationsPanel() {
+
 		JPanel panel = new JPanel();
 
 		panel.setLayout(new GridBagLayout());
@@ -268,8 +277,28 @@ public class WhiteRabbitMain implements ActionListener {
 		sourceType.setToolTipText("Select the type of source data available");
 		sourceType.addItemListener(new ItemListener() {
 
+
+
 			@Override
 			public void itemStateChanged(ItemEvent arg0) {
+
+				JOptionPane.showMessageDialog(null,arg0.getItem().toString());
+				//post processing check to make sure BigQuery panel is only set for BigQuery
+				if (IS_BIGQUERY)
+
+				{
+					JOptionPane.showMessageDialog(null, "Found IS_BIGQUERY TRUE");
+
+					if (!(!sourceIsFiles && arg0.getItem().toString().equals("Google BigQuery")))
+					{
+						//if BigQuery was the choice, we created new labels. Need to recreate the original if not
+						IS_BIGQUERY = false;
+						JOptionPane.showMessageDialog(null,"Was BQ. Is now not");
+						recreateRDBMSPanelFields(sourcePanel,arg0);
+					}
+				}
+
+
 				sourceIsFiles = arg0.getItem().toString().equals("Delimited text files");
 				sourceServerField.setEnabled(!sourceIsFiles);
 				sourceUserField.setEnabled(!sourceIsFiles);
@@ -290,6 +319,48 @@ public class WhiteRabbitMain implements ActionListener {
 					sourceUserField.setToolTipText("The user used to log in to the server");
 					sourcePasswordField.setToolTipText("The password used to log in to the server");
 					sourceDatabaseField.setToolTipText("For PostgreSQL servers this field contains the schema containing the source tables");
+				} else if (!sourceIsFiles && arg0.getItem().toString().equals("Google BigQuery")) {
+					//Need to set this so we have a way to reset the form if user clicks off of BigQuery
+					IS_BIGQUERY = true;
+					JOptionPane.showMessageDialog(null,"Setting up BQ stuff");
+
+
+					//Bigquery server name will always be https://bigquery.cloud.google.com/.
+					//will set this value to identify it and use in later processing.
+					sourceServerField.setText("https://bigquery.cloud.google.com/");
+					sourceServerField.setEditable(false);
+
+					//sourcePanel.remove(sourceDelimiterField);
+
+					java.awt.Component[] c = sourcePanel.getComponents();
+					int cnt = c.length;
+					int i = 0;
+
+					while (i < cnt){
+						String msg = c[i].toString();
+						if (c[i].toString().startsWith("javax.swing.JLabel"))
+						{
+							JLabel temp_label = (JLabel) c[i];
+							switch (temp_label.getText())
+							{
+								case "Database name": temp_label.setText("Dataset (including project idenntifier)");
+								break;
+								case "User name": temp_label.setText("Billing Project");
+								break;
+								case "Password": temp_label.setText("Service Account Key Location (JSON)");
+								break;
+								case "Delimiter": temp_label.setText("");
+								break;
+							}
+						}
+						i+=1;
+					}
+
+
+					//sourceUserField.setToolTipText("The user used to log in to the server");
+					//sourcePasswordField.setToolTipText("The password used to log in to the server");
+					//sourceDatabaseField.setToolTipText("For PostgreSQL servers this field contains the schema containing the source tables");
+
 				} else if (!sourceIsFiles) {
 					sourceServerField.setToolTipText("This field contains the name or IP address of the database server");
 					if (arg0.getItem().toString().equals("SQL Server"))
@@ -300,8 +371,12 @@ public class WhiteRabbitMain implements ActionListener {
 					sourcePasswordField.setToolTipText("The password used to log in to the server");
 					sourceDatabaseField.setToolTipText("The name of the database containing the source tables");
 				}
+
+
 			}
 		});
+
+
 		sourcePanel.add(sourceType);
 
 		sourcePanel.add(new JLabel("Server location"));
@@ -325,6 +400,9 @@ public class WhiteRabbitMain implements ActionListener {
 		sourceDelimiterField = new JTextField(",");
 		sourceDelimiterField.setToolTipText("The delimiter that separates values. Enter 'tab' for tab.");
 		sourcePanel.add(sourceDelimiterField);
+
+		JOptionPane.showMessageDialog(null,  "Created source panel");
+
 
 		c.gridx = 0;
 		c.gridy = 1;
@@ -353,6 +431,52 @@ public class WhiteRabbitMain implements ActionListener {
 
 		return panel;
 	}
+
+	private void recreateRDBMSPanelFields(JPanel sourcePanel,ItemEvent arg_in)
+	{
+		JOptionPane.showMessageDialog(null,"Starting to recreate the fields");
+
+		//clear the previous compoents
+		java.awt.Component[] c = sourcePanel.getComponents();
+		int cnt = c.length;
+		int i = 0;
+		while (i < cnt) {
+			sourcePanel.remove(c[i]);
+			i+= 1;
+		}
+
+		JOptionPane.showMessageDialog(null,"Components cleared");
+
+		//create the panel from scratch.
+		sourcePanel.add(sourceType);
+
+		sourcePanel.add(new JLabel("Server location"));
+		sourceServerField = new JTextField("127.0.0.1");
+		sourceServerField.setEnabled(false);
+		sourcePanel.add(sourceServerField);
+		sourcePanel.add(new JLabel("User name"));
+		sourceUserField = new JTextField("");
+		sourceUserField.setEnabled(false);
+		sourcePanel.add(sourceUserField);
+		sourcePanel.add(new JLabel("Password"));
+		sourcePasswordField = new JPasswordField("");
+		sourcePasswordField.setEnabled(false);
+		sourcePanel.add(sourcePasswordField);
+		sourcePanel.add(new JLabel("Database name"));
+		sourceDatabaseField = new JTextField("");
+		sourceDatabaseField.setEnabled(false);
+		sourcePanel.add(sourceDatabaseField);
+
+		sourcePanel.add(new JLabel("Delimiter"));
+		sourceDelimiterField = new JTextField(",");
+		sourceDelimiterField.setToolTipText("The delimiter that separates values. Enter 'tab' for tab.");
+		sourcePanel.add(sourceDelimiterField);
+
+		//itemStateChanged(arg_in);
+		sourceType.setSelectedItem(arg_in);
+
+	}
+
 
 	private JPanel createScanPanel() {
 		JPanel panel = new JPanel();

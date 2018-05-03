@@ -149,6 +149,12 @@ public class WhiteRabbitMain implements ActionListener {
 			frame.setVisible(true);
 			ObjectExchange.frame = frame;
 		}
+		//has to occur after form is created
+		//set the field
+		if (args.length ==1) {
+			sourceType.setSelectedItem(args[0]);
+		}
+
 	}
 
 	private void launchCommandLine(String iniFileName) {
@@ -282,19 +288,24 @@ public class WhiteRabbitMain implements ActionListener {
 			@Override
 			public void itemStateChanged(ItemEvent arg0) {
 
-				JOptionPane.showMessageDialog(null,arg0.getItem().toString());
+				//JOptionPane.showMessageDialog(null,arg0.getItem().toString());
 				//post processing check to make sure BigQuery panel is only set for BigQuery
 				if (IS_BIGQUERY)
 
 				{
-					JOptionPane.showMessageDialog(null, "Found IS_BIGQUERY TRUE");
+					//JOptionPane.showMessageDialog(null, "Found IS_BIGQUERY TRUE");
 
 					if (!(!sourceIsFiles && arg0.getItem().toString().equals("Google BigQuery")))
 					{
-						//if BigQuery was the choice, we created new labels. Need to recreate the original if not
+						//if BigQuery was the choice, we created new labels.
+						// Need to recreate the original if no longer BQ.
 						IS_BIGQUERY = false;
-						JOptionPane.showMessageDialog(null,"Was BQ. Is now not");
-						recreateRDBMSPanelFields(sourcePanel,arg0);
+						String[] restart_args = new String[1];
+						restart_args[0] = arg0.getItem().toString();
+						//create a new frame with the db choice identified.
+						new WhiteRabbitMain(restart_args);
+						//remove this frame with BQ fields.
+						frame.dispose();
 					}
 				}
 
@@ -322,7 +333,7 @@ public class WhiteRabbitMain implements ActionListener {
 				} else if (!sourceIsFiles && arg0.getItem().toString().equals("Google BigQuery")) {
 					//Need to set this so we have a way to reset the form if user clicks off of BigQuery
 					IS_BIGQUERY = true;
-					JOptionPane.showMessageDialog(null,"Setting up BQ stuff");
+					//JOptionPane.showMessageDialog(null,"Setting up BQ stuff");
 
 
 					//Bigquery server name will always be https://bigquery.cloud.google.com/.
@@ -401,7 +412,7 @@ public class WhiteRabbitMain implements ActionListener {
 		sourceDelimiterField.setToolTipText("The delimiter that separates values. Enter 'tab' for tab.");
 		sourcePanel.add(sourceDelimiterField);
 
-		JOptionPane.showMessageDialog(null,  "Created source panel");
+		//JOptionPane.showMessageDialog(null,  "Created source panel");
 
 
 		c.gridx = 0;
@@ -432,50 +443,58 @@ public class WhiteRabbitMain implements ActionListener {
 		return panel;
 	}
 
-	private void recreateRDBMSPanelFields(JPanel sourcePanel,ItemEvent arg_in)
-	{
-		JOptionPane.showMessageDialog(null,"Starting to recreate the fields");
+	//Probably don't need this. Just recall main and set the thing.
+	//TODO(crosbiec) delete this.
+//	private void recreateRDBMSPanelFields(JPanel sourcePanel,ItemEvent arg_in)
+//	{
+//		JOptionPane.showMessageDialog(null,"Starting to recreate the fields");
+//
+//
+//		//clear the previous compoents
+//		java.awt.Component[] c = sourcePanel.getComponents();
+//		int cnt = c.length;
+//		int i = 0;
+//		while (i < cnt) {
+//			sourcePanel.remove(c[i]);
+//			i+= 1;
+//		}
+//
+//		sourcePanel = new JPanel();
+//		sourcePanel.setLayout(new GridLayout(0, 2));
+//		sourcePanel.setBorder(BorderFactory.createTitledBorder("Source data location reloaded"));
+//		sourcePanel.add(new JLabel("Data type"));
+//
+//		JOptionPane.showMessageDialog(null,"Components cleared");
+//
+//		//create the panel from scratch.
+//		sourcePanel.add(sourceType);
+//
+//		sourcePanel.add(new JLabel("Server location"));
+//		sourceServerField = new JTextField("127.0.0.1");
+//		sourceServerField.setEnabled(false);
+//		sourcePanel.add(sourceServerField);
+//		sourcePanel.add(new JLabel("User name"));
+//		sourceUserField = new JTextField("");
+//		sourceUserField.setEnabled(false);
+//		sourcePanel.add(sourceUserField);
+//		sourcePanel.add(new JLabel("Password"));
+//		sourcePasswordField = new JPasswordField("");
+//		sourcePasswordField.setEnabled(false);
+//		sourcePanel.add(sourcePasswordField);
+//		sourcePanel.add(new JLabel("Database name"));
+//		sourceDatabaseField = new JTextField("");
+//		sourceDatabaseField.setEnabled(false);
+//		sourcePanel.add(sourceDatabaseField);
+//
+//		sourcePanel.add(new JLabel("Delimiter"));
+//		sourceDelimiterField = new JTextField(",");
+//		sourceDelimiterField.setToolTipText("The delimiter that separates values. Enter 'tab' for tab.");
+//		sourcePanel.add(sourceDelimiterField);
+//
+//		//itemStateChanged(arg_in);
+		//sourceType.setSelectedItem(arg_in);
 
-		//clear the previous compoents
-		java.awt.Component[] c = sourcePanel.getComponents();
-		int cnt = c.length;
-		int i = 0;
-		while (i < cnt) {
-			sourcePanel.remove(c[i]);
-			i+= 1;
-		}
-
-		JOptionPane.showMessageDialog(null,"Components cleared");
-
-		//create the panel from scratch.
-		sourcePanel.add(sourceType);
-
-		sourcePanel.add(new JLabel("Server location"));
-		sourceServerField = new JTextField("127.0.0.1");
-		sourceServerField.setEnabled(false);
-		sourcePanel.add(sourceServerField);
-		sourcePanel.add(new JLabel("User name"));
-		sourceUserField = new JTextField("");
-		sourceUserField.setEnabled(false);
-		sourcePanel.add(sourceUserField);
-		sourcePanel.add(new JLabel("Password"));
-		sourcePasswordField = new JPasswordField("");
-		sourcePasswordField.setEnabled(false);
-		sourcePanel.add(sourcePasswordField);
-		sourcePanel.add(new JLabel("Database name"));
-		sourceDatabaseField = new JTextField("");
-		sourceDatabaseField.setEnabled(false);
-		sourcePanel.add(sourceDatabaseField);
-
-		sourcePanel.add(new JLabel("Delimiter"));
-		sourceDelimiterField = new JTextField(",");
-		sourceDelimiterField.setToolTipText("The delimiter that separates values. Enter 'tab' for tab.");
-		sourcePanel.add(sourceDelimiterField);
-
-		//itemStateChanged(arg_in);
-		sourceType.setSelectedItem(arg_in);
-
-	}
+	//}
 
 
 	private JPanel createScanPanel() {

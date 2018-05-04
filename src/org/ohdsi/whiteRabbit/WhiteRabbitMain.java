@@ -90,6 +90,7 @@ public class WhiteRabbitMain implements ActionListener {
 
 	//BigQuery requires different connection parameters. This global variable is needed to track what the form looks like
 	private  boolean 			IS_BIGQUERY	 					= false;
+	private  JTextField         sourceJSONKeyField;
 
 	private JFrame				frame;
 	private JTextField			folderField;
@@ -119,6 +120,11 @@ public class WhiteRabbitMain implements ActionListener {
 	private boolean				targetIsFiles					= false;
 
 	private List<JComponent>	componentsToDisableWhenRunning	= new ArrayList<JComponent>();
+
+	public void msg(String m){
+	    //TODO: This should be removed. Debug only.
+        JOptionPane.showMessageDialog(null,m);
+    }
 
 	public static void main(String[] args) {
 		new WhiteRabbitMain(args);
@@ -291,7 +297,6 @@ public class WhiteRabbitMain implements ActionListener {
 				//JOptionPane.showMessageDialog(null,arg0.getItem().toString());
 				//post processing check to make sure BigQuery panel is only set for BigQuery
 				if (IS_BIGQUERY)
-
 				{
 					//JOptionPane.showMessageDialog(null, "Found IS_BIGQUERY TRUE");
 
@@ -333,39 +338,123 @@ public class WhiteRabbitMain implements ActionListener {
 				} else if (!sourceIsFiles && arg0.getItem().toString().equals("Google BigQuery")) {
 					//Need to set this so we have a way to reset the form if user clicks off of BigQuery
 					IS_BIGQUERY = true;
-					//JOptionPane.showMessageDialog(null,"Setting up BQ stuff");
 
+					//JOptionPane.showMessageDialog(null,"Setting up BQ stuff");
+                    java.awt.Component[] c = sourcePanel.getComponents();
+                    int cnt = c.length;
+                    int i = 0;
+                    //booya - working here
+                    while (i < cnt) {
+                        Boolean keep = false;
+
+                        if ((c[i].toString().startsWith("javax.swing.JComboBox"))) {
+                            keep = true;
+                        }
+                        else if (c[i].toString().startsWith("javax.swing.JLabel"))
+                        {
+							JLabel temp_label = (JLabel) c[i];
+							if (temp_label.getText().equals("Data type"))
+							{
+                               keep = true;
+							}
+                        }
+
+                        if (!keep)
+                        {
+                            sourcePanel.remove(c[i]);
+                        }
+
+                        i+=1;
+                    }
 
 					//Bigquery server name will always be https://bigquery.cloud.google.com/.
 					//will set this value to identify it and use in later processing.
+                    sourcePanel.add(new JLabel("Server location"));
 					sourceServerField.setText("https://bigquery.cloud.google.com/");
 					sourceServerField.setEditable(false);
+					sourcePanel.add(sourceServerField);
 
-					//sourcePanel.remove(sourceDelimiterField);
+					//start with service key so you can auto-populate datasets/projects later.
+                    sourcePanel.add(new JLabel("Service Account Key Location (JSON)"));
+                    JButton pickJSONKey = new JButton("Choose JSON Key");
+                    pickJSONKey.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            populateJSONKey();
+                        }
+                    });
+                    sourcePanel.add(pickJSONKey);
 
-					java.awt.Component[] c = sourcePanel.getComponents();
-					int cnt = c.length;
-					int i = 0;
 
-					while (i < cnt){
-						String msg = c[i].toString();
-						if (c[i].toString().startsWith("javax.swing.JLabel"))
-						{
-							JLabel temp_label = (JLabel) c[i];
-							switch (temp_label.getText())
-							{
-								case "Database name": temp_label.setText("Dataset (including project idenntifier)");
-								break;
-								case "User name": temp_label.setText("Billing Project");
-								break;
-								case "Password": temp_label.setText("Service Account Key Location (JSON)");
-								break;
-								case "Delimiter": temp_label.setText("");
-								break;
-							}
-						}
-						i+=1;
-					}
+                    sourcePanel.add(new JLabel(""));
+//                    sourceJSONKeyField.addActionListener(new ActionListener() {
+//                        public void actionPerformed(ActionEvent e) {
+//                            sourcePasswordField.setText(sourceJSONKeyField.getText());
+//                        }
+//                    });
+                    sourceJSONKeyField = new JTextField("<key file missing>");
+                    sourceJSONKeyField.setEnabled(false);
+                    sourcePanel.add(sourceJSONKeyField);
+
+
+					sourcePanel.add(new JLabel("Billing Proejct"));
+                    sourcePanel.add(sourceUserField);
+
+                    sourcePanel.add(new JLabel("Dataset (including project identifier)"));
+                    sourcePanel.add(sourceDatabaseField);
+
+                    sourcePanel.updateUI();
+
+
+//
+//
+//					java.awt.Component[] c = sourcePanel.getComponents();
+//					int cnt = c.length;
+//					int i = 0;
+//
+//					//booya - working here
+//					while (i < cnt){
+//
+//						if (c[i].toString().startsWith("javax.swing.JLabel"))
+//						{
+//							JLabel temp_label = (JLabel) c[i];
+//							switch (temp_label.getText())
+//							{
+//								case "Database name":
+//                                    temp_label.setText("Service Account Key Location (JSON)");
+//                                    JButton pickJSONKey = new JButton("Choose JSON Key");
+//                                    pickJSONKey.addActionListener(new ActionListener() {
+//                                        public void actionPerformed(ActionEvent e) {
+//                                            pickScanReportFile();
+//                                        }
+//                                    });
+//								break;
+//								case "User name": temp_label.setText("Billing Project");
+//								break;
+//
+//								case "Password": temp_label.setText("Dataset (including project identifier)");
+//                                break;
+//
+//								case "Delimiter": sourcePanel.remove(c[i]);
+//								break;
+//							}
+//						}
+//						//else if  (c[i].toString().startsWith("javax.swing.JTextField"))
+//                        //{
+//                         //   JTextField temp_label = (JTextField) c[i];
+//                           // msg(temp_label.getUIClassID());
+//                        //}
+//
+//						i+=1;
+//
+//					}
+//                    sourcePanel.add(sourcePasswordField);
+//					sourcePanel.add(sourceDatabaseField);
+//
+//
+//
+
+
+
 
 
 					//sourceUserField.setToolTipText("The user used to log in to the server");
@@ -792,6 +881,15 @@ public class WhiteRabbitMain implements ActionListener {
 		if (returnVal == JFileChooser.APPROVE_OPTION)
 			folderField.setText(fileChooser.getSelectedFile().getAbsolutePath());
 	}
+
+    private void populateJSONKey() {
+        JFileChooser fileChooser = new JFileChooser(new File(folderField.getText()));
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        int returnVal = fileChooser.showDialog(frame, "Select scan report file");
+        if (returnVal == JFileChooser.APPROVE_OPTION)
+            sourceJSONKeyField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+            sourcePasswordField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+    }
 
 	private void pickScanReportFile() {
 		JFileChooser fileChooser = new JFileChooser(new File(folderField.getText()));

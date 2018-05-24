@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="google-cloud-bigquery-1.29.1-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/google-cloud-bigquery-1.29.1-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

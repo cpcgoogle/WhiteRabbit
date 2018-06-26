@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="SimbaJDBCDriverforGoogleBigQuery42_1.1.6">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/lib/SimbaJDBCDriverforGoogleBigQuery42_1.1.6.1006" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/lib/SimbaJDBCDriverforGoogleBigQuery42_1.1.6.1006" recursive="false" />
+  </library>
+</component>

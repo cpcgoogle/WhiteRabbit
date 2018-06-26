@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "google.com:crosbie-test-project",
+  "private_key_id": "6fb15539f648911fae60ef332bfbe2a7c65ef419",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDQXY6rwypRfbun\nd/U6c4F1SaGSkhwx8yqPO0Xo2SGjMdfGv4Nfh7AkqETYQkLAO3zbODr4dVP5+f4l\nquH0I+WOoIQxWx22MnKyKV/w4WU/SWQSsUr8Sn8hf0tmEXTTVQ4veAMy2quMYLfJ\nDZ6FluaaUZQBLFiAe1ljuFfBZpbMtzrz2h3KHINEUI5sxbiIIfuywDzEYrd5hoZ6\n8DO8Lz6VTTNiHoiHNSWoQsDZ/QUDY1MlKQjq9N/wtYWkiFHUn+NIPYWrxurqJtAR\nbgz1BrLXEo0dgdAwxGlWV3xb7RdWTiIbo8WxBx0cNwKLVjs72atgMPhOB3oMOrlR\nkHgkEDQrAgMBAAECggEAMDQssPTeIesmEhiw3VxiazllDS0LI80fH/K0+ijdXM1H\nn32nzV5tNBXPk35ExgcdG/QWxGsUSeT5VEqDqoDxdv0QiACNz5w9J5Vl0iq6yxjV\n83Mbp2Eupxe1YEASmF95gCbSCp5HCJtJeVRSw5IE+Fd+F4VkVhjzNZwshRwQL/ya\nvYnvSzCkRCD96euxQ628QzFnT4d6VQax6ihwEvOMx16iZPWCx0AADIvkeRkqpYvk\n/hWpjfInGWFdpf3irHepguWtucbpolQ5q0A2UtcWOEfdv8dPsnr6HiW46zXx/YPz\nCmCCGfnBqNQBmMqz0izpSBzT9Uh/EhIsgg/9eFOKcQKBgQDzoFUX4Od51RORTRg5\nGRx85+I2mQYAKtb7zPSs2YN1Ft7Cr64y3VrVFNlu2yao+PoZQAWmet/GJNUbh9UP\nydWdDP4bIVL2rtHoXJaa6rtyHqWUgJoEmrF5OWAaIn+ni2+sqh7WFtOhQ45wngsD\no+RD3v5IQbSxkYNi0LHOMFWsEQKBgQDa8sIFw+0s8oFdA7BzE30TL7WaBd1L9Anv\nlgrSF6/8zvCgZ1YkZcBbjwOOCcjqP/pEPMbLQd1yjRloreavvuMPyymobt6B7PAE\nnRylmOe1ABVn20B3cainijSqjUNfgfYLxbtUt7oJe9BvvQx2bsXBhH0bSDb8Eeha\ndXsggyYIewKBgQCISHdxfSFf2N8yV/Ml9bMm+DxmGGHv9AcBIpz4mFDeTiXcuJP0\n5jiqnBgp2DQfL/AP8e13PKMzX2VLGkgIpfp1+U+oc5LKZe8MUcb58DddVmF/2hTO\nYI7I5lypIgVQ/0JAT4YicvB99KGYxAAbUDIf+X07hG4FKwZZX68nTYiPUQKBgQCc\nnJSIRzM5uWUrQV5PkhsfRDskJxm6IJ+SzsKCsQrjTKr2MbR+aIIFe/DRAtLCLG05\nrjeMYFqke6U3KV0fTO1h+LKdlmB2kyLEShWZphvnbl3hYgVk6tn2rXcqn80XXgC/\nPvrWiGz8J6JaquFlPasa10gd4bPi7nRDcFFYWjc0TQKBgQDg40U+yMZrfRsOqtUp\n4Wh63eJ5gcs8UEDjtX9JgPVtGiP6QhcfMp0EkqMtZOGBc1mfTuIBbSDf4WuXPE4t\nvlZXMvdxKPytmrPdfTukVr6g06F1GeDbCIwzf11oQ7rPD2LjeDoRzznntQy+tzyA\nmAZ4CFxOgUdCSYJr2Y6x9l8cTg==\n-----END PRIVATE KEY-----\n",
+  "client_email": "white-rabbit-tester@crosbie-test-project.google.com.iam.gserviceaccount.com",
+  "client_id": "103919044382387475910",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/white-rabbit-tester%40crosbie-test-project.google.com.iam.gserviceaccount.com"
+}

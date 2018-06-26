@@ -218,5 +218,6 @@
     </orderEntry>
     <orderEntry type="library" name="google-cloud-bigquery-1.29.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="uber-google-cloud-bigquery-1.29.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="SimbaJDBCDriverforGoogleBigQuery42_1.1.6" level="project" />
   </component>
 </module>
